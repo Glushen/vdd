@@ -1,3 +1,3 @@
 #pragma once
 
-int sq(int x);
+void yyerror(const char *s, ...);

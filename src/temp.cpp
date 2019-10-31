@@ -1,5 +1,6 @@
+#include <cstdio>
 #include "temp.h"
 
-int sq(int x) {
-    return x*x;
+void yyerror(const char *s, ...) {
+    // stub
 }
