@@ -6,6 +6,17 @@
 
 %%
 
+char      { return CHAR; }
+long      { return LONG; }
+short     { return SHORT; }
+int       { return INT; }
+float     { return FLOAT; }
+double    { return DOUBLE; }
+signed    { return SIGNED; }
+unsigned  { return UNSIGNED; }
+
+[a-zA-Z_][a-zA-Z_0-9]*  { yylval.name = new std::string(yytext); return NAME; }
+
 .        { return TEMP; }
 \n       { return TEMP; }
 <<EOF>>  { return TEMP; }
