@@ -8,6 +8,7 @@
 
 %union {
     std::string* name;
+    std::vector<std::string>* nameList;
     vdd::Type* type;
     unsigned int numericTypeMask;
 }
@@ -16,16 +17,27 @@
 
 %token CHAR LONG SHORT INT FLOAT DOUBLE SIGNED UNSIGNED
 %token <name> NAME
+%token TEMPLATE OPENING_ANGLE_BRACKET CLOSING_ANGLE_BRACKET TYPENAME COMMA
 
 %type <type> type
 %type <numericTypeMask> type-numeric signity
+%type <nameList> optional-template typename-list
 
 
 %%
 
 
 declaration:
-    type
+    optional-template type
+
+
+optional-template:
+    %empty                                                              { $$ = new std::vector<std::string>(); }
+|   TEMPLATE OPENING_ANGLE_BRACKET typename-list CLOSING_ANGLE_BRACKET  { $$ = $3; }
+
+typename-list:
+    TYPENAME NAME                      { $$ = new std::vector<std::string>({ ph::unwrap($2) }); }
+|   typename-list COMMA TYPENAME NAME  { $$ = $1; $$->push_back(ph::unwrap($4)); }
 
 type:
     type-numeric  { $$ = new vdd::Type($1); }

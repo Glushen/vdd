@@ -15,6 +15,12 @@ double    { return DOUBLE; }
 signed    { return SIGNED; }
 unsigned  { return UNSIGNED; }
 
+template  { return TEMPLATE; }
+\<        { return OPENING_ANGLE_BRACKET; }
+\>        { return CLOSING_ANGLE_BRACKET; }
+typename  { return TYPENAME; }
+,         { return COMMA; }
+
 [a-zA-Z_][a-zA-Z_0-9]*  { yylval.name = new std::string(yytext); return NAME; }
 
 .        { return TEMP; }
