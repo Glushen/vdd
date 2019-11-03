@@ -11,8 +11,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_library(
     cpp_vdd_lib STATIC
-    temp.h
-    temp.cpp
+    vdd.h vdd.cpp
     ${FLEX_lexer_OUTPUTS}
     ${BISON_parser_OUTPUTS}
 )
