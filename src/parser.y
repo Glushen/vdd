@@ -11,6 +11,7 @@
     std::vector<std::string>* nameList;
     vdd::Type* type;
     unsigned int numericTypeMask;
+    std::string* integer;
 }
 
 %token TEMP
@@ -18,6 +19,8 @@
 %token CHAR LONG SHORT INT FLOAT DOUBLE SIGNED UNSIGNED
 %token <name> NAME
 %token TEMPLATE OPENING_ANGLE_BRACKET CLOSING_ANGLE_BRACKET TYPENAME COMMA
+%token ASTERISK OPENING_SQUARE_BRACKET CLOSING_SQUARE_BRACKET OPENING_ROUND_BRACKET CLOSING_ROUND_BRACKET
+%token <integer> INTEGER
 
 %type <type> type
 %type <numericTypeMask> type-numeric signity
@@ -28,7 +31,28 @@
 
 
 declaration:
-    optional-template type
+    optional-template type declarator
+
+
+declarator:
+    noptr-declarator
+|   ASTERISK declarator
+
+noptr-declarator:
+    %empty
+|   NAME
+|   NAME ASTERISK declarator
+|   OPENING_ROUND_BRACKET declarator CLOSING_ROUND_BRACKET
+|   noptr-declarator OPENING_SQUARE_BRACKET INTEGER CLOSING_SQUARE_BRACKET
+|   noptr-declarator OPENING_ROUND_BRACKET argument-list CLOSING_ROUND_BRACKET
+
+argument-list:
+    %empty
+|   not-empty-argument-list
+
+not-empty-argument-list:
+    type declarator
+|   not-empty-argument-list COMMA type declarator
 
 
 optional-template:

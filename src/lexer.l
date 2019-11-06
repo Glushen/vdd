@@ -21,6 +21,13 @@ template  { return TEMPLATE; }
 typename  { return TYPENAME; }
 ,         { return COMMA; }
 
+\*        { return ASTERISK; }
+\[        { return OPENING_SQUARE_BRACKET; }
+\]        { return CLOSING_SQUARE_BRACKET; }
+\(        { return OPENING_ROUND_BRACKET; }
+\)        { return CLOSING_ROUND_BRACKET; }
+[0-9]+    { yylval.integer = new std::string(yytext); return INTEGER; }
+
 [a-zA-Z_][a-zA-Z_0-9]*  { yylval.name = new std::string(yytext); return NAME; }
 
 .        { return TEMP; }
