@@ -1,3 +1,5 @@
+%glr-parser
+
 %code requires {
     #include "parser_helper.h"
     #include "type.h"
@@ -27,6 +29,12 @@
 %type <nameList> optional-template typename-list
 
 
+%nonassoc LOWER_THAN_OPENING_BRACKET
+%nonassoc OPENING_SQUARE_BRACKET
+%nonassoc OPENING_ROUND_BRACKET
+%nonassoc HIGHER_THAN_OPENING_BRACKET
+
+
 %%
 
 
@@ -35,11 +43,11 @@ declaration:
 
 
 declarator:
-    noptr-declarator
+    noptr-declarator %prec LOWER_THAN_OPENING_BRACKET
 |   ASTERISK declarator
 
 noptr-declarator:
-    %empty
+    %prec HIGHER_THAN_OPENING_BRACKET %empty
 |   NAME
 |   NAME ASTERISK declarator
 |   OPENING_ROUND_BRACKET declarator CLOSING_ROUND_BRACKET
