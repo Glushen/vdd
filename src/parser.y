@@ -27,7 +27,7 @@
 %token ASTERISK OPENING_SQUARE_BRACKET CLOSING_SQUARE_BRACKET OPENING_ROUND_BRACKET CLOSING_ROUND_BRACKET
 %token <integer> INTEGER
 
-%type <type> type local-type
+%type <type> type class-type local-class-type
 %type <numericTypeMask> type-numeric signity
 %type <nameList> optional-template typename-list
 %type <declaration> declaration
@@ -40,6 +40,8 @@
 %nonassoc OPENING_ROUND_BRACKET
 %nonassoc HIGHER_THAN_OPENING_BRACKET
 
+%nonassoc LOWER_THAN_DOUBLE_COLON
+%nonassoc DOUBLE_COLON
 
 %%
 
@@ -55,7 +57,7 @@ declarator:
 noptr-declarator:
     %prec HIGHER_THAN_OPENING_BRACKET %empty                                    { $$ = new vdd::NameDeclarator(""); }
 |   NAME                                                                        { $$ = new vdd::NameDeclarator(ph::unwrap($1)); }
-|   NAME ASTERISK declarator                                                    { $$ = new vdd::MemberPointerDeclarator(ph::unwrap($1), std::unique_ptr<vdd::Declarator>($3)); }
+|   class-type DOUBLE_COLON ASTERISK declarator                                 { $$ = new vdd::MemberPointerDeclarator(ph::unwrap($1), std::unique_ptr<vdd::Declarator>($4)); }
 |   OPENING_ROUND_BRACKET declarator CLOSING_ROUND_BRACKET                      { $$ = $2; }
 |   noptr-declarator OPENING_SQUARE_BRACKET CLOSING_SQUARE_BRACKET              { $$ = new vdd::ArrayDeclarator(std::unique_ptr<vdd::Declarator>($1)); }
 |   noptr-declarator OPENING_SQUARE_BRACKET INTEGER CLOSING_SQUARE_BRACKET      { $$ = new vdd::ArrayDeclarator(std::unique_ptr<vdd::Declarator>($1), ph::unwrap($3)); }
@@ -80,12 +82,15 @@ typename-list:
 
 type:
     type-numeric             { $$ = new vdd::Type($1); }
-|   local-type               { $$ = $1; }
-|   DOUBLE_COLON local-type  { $$ = $2; $$->anotherTypeName = "::" + $$->anotherTypeName; }
+|   class-type               { $$ = $1; }
 
-local-type:
-    NAME                          { $$ = new vdd::Type(ph::unwrap($1)); }
-|   local-type DOUBLE_COLON NAME  { $$ = $1; $$->anotherTypeName += "::" + ph::unwrap($3); }
+class-type:
+    local-class-type %prec LOWER_THAN_DOUBLE_COLON  { $$ = $1; }
+|   DOUBLE_COLON local-class-type                   { $$ = $2; }
+
+local-class-type:
+    NAME                                { $$ = new vdd::Type(ph::unwrap($1)); }
+|   local-class-type DOUBLE_COLON NAME  { $$ = $1; $$->anotherTypeName += "::" + ph::unwrap($3); }
 
 type-numeric:
     CHAR          { $$ = vdd::CHAR; }

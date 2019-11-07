@@ -13,8 +13,8 @@ vdd::NameDeclarator::NameDeclarator(std::string name):
 vdd::PointerDeclarator::PointerDeclarator(std::unique_ptr<Declarator> declarator):
     declarator(std::move(declarator)) { }
 
-vdd::MemberPointerDeclarator::MemberPointerDeclarator(std::string className, std::unique_ptr<Declarator> declarator):
-    className(std::move(className)),
+vdd::MemberPointerDeclarator::MemberPointerDeclarator(vdd::Type type, std::unique_ptr<Declarator> declarator):
+    type(std::move(type)),
     declarator(std::move(declarator)) { }
 
 vdd::ArrayDeclarator::ArrayDeclarator(std::unique_ptr<Declarator> declarator, std::string count):

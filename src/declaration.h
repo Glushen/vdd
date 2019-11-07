@@ -32,9 +32,9 @@ namespace vdd {
 
     class MemberPointerDeclarator: public Declarator {
     public:
-        std::string className;
+        vdd::Type type;
         std::unique_ptr<Declarator> declarator;
-        MemberPointerDeclarator(std::string className, std::unique_ptr<Declarator> declarator);
+        MemberPointerDeclarator(vdd::Type type, std::unique_ptr<Declarator> declarator);
     };
 
     class ArrayDeclarator: public Declarator {
