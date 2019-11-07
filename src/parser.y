@@ -10,7 +10,7 @@
 
 %union {
     std::string* name;
-    std::vector<std::string>* nameList;
+    std::unordered_set<std::string>* templateTypenames;
     vdd::Type* type;
     unsigned int numericTypeMask;
     std::string* integer;
@@ -29,7 +29,7 @@
 
 %type <type> type class-type local-class-type
 %type <numericTypeMask> type-numeric signity
-%type <nameList> optional-template typename-list
+%type <templateTypenames> optional-template typename-list
 %type <declaration> declaration
 %type <declarator> declarator noptr-declarator
 %type <argumentList> argument-list not-empty-argument-list
@@ -68,17 +68,17 @@ argument-list:
 |   not-empty-argument-list  { $$ = $1; }
 
 not-empty-argument-list:
-    type declarator                                { $$ = new std::vector<vdd::Declaration>(); $$->emplace_back(std::vector<std::string>(), ph::unwrap($1), std::unique_ptr<vdd::Declarator>($2)); }
-|   not-empty-argument-list COMMA type declarator  { $$ = $1; $$->emplace_back(std::vector<std::string>(), ph::unwrap($3), std::unique_ptr<vdd::Declarator>($4)); }
+    type declarator                                { $$ = new std::vector<vdd::Declaration>(); $$->emplace_back(std::unordered_set<std::string>(), ph::unwrap($1), std::unique_ptr<vdd::Declarator>($2)); }
+|   not-empty-argument-list COMMA type declarator  { $$ = $1; $$->emplace_back(std::unordered_set<std::string>(), ph::unwrap($3), std::unique_ptr<vdd::Declarator>($4)); }
 
 
 optional-template:
-    %empty                                                              { $$ = new std::vector<std::string>(); }
+    %empty                                                              { $$ = new std::unordered_set<std::string>(); }
 |   TEMPLATE OPENING_ANGLE_BRACKET typename-list CLOSING_ANGLE_BRACKET  { $$ = $3; }
 
 typename-list:
-    TYPENAME NAME                      { $$ = new std::vector<std::string>({ ph::unwrap($2) }); }
-|   typename-list COMMA TYPENAME NAME  { $$ = $1; $$->push_back(ph::unwrap($4)); }
+    TYPENAME NAME                      { $$ = new std::unordered_set<std::string>({ ph::unwrap($2) }); }
+|   typename-list COMMA TYPENAME NAME  { $$ = $1; $$->insert(ph::unwrap($4)); }
 
 type:
     type-numeric             { $$ = new vdd::Type($1); }

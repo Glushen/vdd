@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include <unordered_set>
 #include "type.h"
 
 namespace vdd {
@@ -14,8 +15,8 @@ namespace vdd {
     public:
         Type type;
         std::unique_ptr<Declarator> declarator;
-        std::vector<std::string> templateTypenames;
-        Declaration(std::vector<std::string> templateTypenames, Type type, std::unique_ptr<Declarator> declarator);
+        std::unordered_set<std::string> templateTypenames;
+        Declaration(std::unordered_set<std::string> templateTypenames, Type type, std::unique_ptr<Declarator> declarator);
     };
 
     class NameDeclarator: public Declarator {

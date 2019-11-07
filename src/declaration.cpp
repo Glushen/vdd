@@ -2,7 +2,7 @@
 
 #include <utility>
 
-vdd::Declaration::Declaration(std::vector<std::string> templateTypenames, Type type, std::unique_ptr<Declarator> declarator):
+vdd::Declaration::Declaration(std::unordered_set<std::string> templateTypenames, Type type, std::unique_ptr<Declarator> declarator):
     templateTypenames(std::move(templateTypenames)),
     type(std::move(type)),
     declarator(std::move(declarator)) { }

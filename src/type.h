@@ -21,5 +21,7 @@ namespace vdd {
 
         explicit Type(unsigned int numericTypeMask);
         explicit Type(std::string anotherTypeName);
+
+        void print(std::ostream& output, const std::unordered_set<std::string>& templateTypenames);
     };
 }
