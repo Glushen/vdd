@@ -23,11 +23,11 @@
 
 %token CHAR LONG SHORT INT FLOAT DOUBLE SIGNED UNSIGNED
 %token <name> NAME
-%token TEMPLATE OPENING_ANGLE_BRACKET CLOSING_ANGLE_BRACKET TYPENAME COMMA
+%token TEMPLATE OPENING_ANGLE_BRACKET CLOSING_ANGLE_BRACKET TYPENAME COMMA DOUBLE_COLON
 %token ASTERISK OPENING_SQUARE_BRACKET CLOSING_SQUARE_BRACKET OPENING_ROUND_BRACKET CLOSING_ROUND_BRACKET
 %token <integer> INTEGER
 
-%type <type> type
+%type <type> type local-type
 %type <numericTypeMask> type-numeric signity
 %type <nameList> optional-template typename-list
 %type <declaration> declaration
@@ -79,8 +79,13 @@ typename-list:
 |   typename-list COMMA TYPENAME NAME  { $$ = $1; $$->push_back(ph::unwrap($4)); }
 
 type:
-    type-numeric  { $$ = new vdd::Type($1); }
-|   NAME          { $$ = new vdd::Type(ph::unwrap($1)); }
+    type-numeric             { $$ = new vdd::Type($1); }
+|   local-type               { $$ = $1; }
+|   DOUBLE_COLON local-type  { $$ = $2; $$->anotherTypeName = "::" + $$->anotherTypeName; }
+
+local-type:
+    NAME                          { $$ = new vdd::Type(ph::unwrap($1)); }
+|   local-type DOUBLE_COLON NAME  { $$ = $1; $$->anotherTypeName += "::" + ph::unwrap($3); }
 
 type-numeric:
     CHAR          { $$ = vdd::CHAR; }

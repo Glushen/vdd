@@ -20,6 +20,7 @@ template  { return TEMPLATE; }
 \>        { return CLOSING_ANGLE_BRACKET; }
 typename  { return TYPENAME; }
 ,         { return COMMA; }
+::        { return DOUBLE_COLON; }
 
 \*        { return ASTERISK; }
 \[        { return OPENING_SQUARE_BRACKET; }
