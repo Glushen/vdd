@@ -16,8 +16,8 @@ namespace vdd {
 
     class Type {
     public:
-        const unsigned int numericTypeMask;
-        const std::string anotherTypeName;
+        unsigned int numericTypeMask;
+        std::string anotherTypeName;
 
         explicit Type(unsigned int numericTypeMask);
         explicit Type(std::string anotherTypeName);

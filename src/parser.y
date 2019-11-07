@@ -2,7 +2,7 @@
 
 %code requires {
     #include "parser_helper.h"
-    #include "type.h"
+    #include "declaration.h"
 
     extern int yylex(void);
     extern void yyerror(const char *s, ...);
@@ -14,6 +14,9 @@
     vdd::Type* type;
     unsigned int numericTypeMask;
     std::string* integer;
+    vdd::Declaration* declaration;
+    vdd::Declarator* declarator;
+    std::vector<vdd::Declaration>* argumentList;
 }
 
 %token TEMP
@@ -27,6 +30,9 @@
 %type <type> type
 %type <numericTypeMask> type-numeric signity
 %type <nameList> optional-template typename-list
+%type <declaration> declaration
+%type <declarator> declarator noptr-declarator
+%type <argumentList> argument-list not-empty-argument-list
 
 
 %nonassoc LOWER_THAN_OPENING_BRACKET
@@ -39,28 +45,29 @@
 
 
 declaration:
-    optional-template type declarator
+    optional-template type declarator  { $$ = new vdd::Declaration(ph::unwrap($1), ph::unwrap($2), std::unique_ptr<vdd::Declarator>($3)); }
 
 
 declarator:
-    noptr-declarator %prec LOWER_THAN_OPENING_BRACKET
-|   ASTERISK declarator
+    noptr-declarator %prec LOWER_THAN_OPENING_BRACKET  { $$ = $1; }
+|   ASTERISK declarator                                { $$ = new vdd::PointerDeclarator(std::unique_ptr<vdd::Declarator>($2)); }
 
 noptr-declarator:
-    %prec HIGHER_THAN_OPENING_BRACKET %empty
-|   NAME
-|   NAME ASTERISK declarator
-|   OPENING_ROUND_BRACKET declarator CLOSING_ROUND_BRACKET
-|   noptr-declarator OPENING_SQUARE_BRACKET INTEGER CLOSING_SQUARE_BRACKET
-|   noptr-declarator OPENING_ROUND_BRACKET argument-list CLOSING_ROUND_BRACKET
+    %prec HIGHER_THAN_OPENING_BRACKET %empty                                    { $$ = new vdd::NameDeclarator(""); }
+|   NAME                                                                        { $$ = new vdd::NameDeclarator(ph::unwrap($1)); }
+|   NAME ASTERISK declarator                                                    { $$ = new vdd::MemberPointerDeclarator(ph::unwrap($1), std::unique_ptr<vdd::Declarator>($3)); }
+|   OPENING_ROUND_BRACKET declarator CLOSING_ROUND_BRACKET                      { $$ = $2; }
+|   noptr-declarator OPENING_SQUARE_BRACKET CLOSING_SQUARE_BRACKET              { $$ = new vdd::ArrayDeclarator(std::unique_ptr<vdd::Declarator>($1)); }
+|   noptr-declarator OPENING_SQUARE_BRACKET INTEGER CLOSING_SQUARE_BRACKET      { $$ = new vdd::ArrayDeclarator(std::unique_ptr<vdd::Declarator>($1), ph::unwrap($3)); }
+|   noptr-declarator OPENING_ROUND_BRACKET argument-list CLOSING_ROUND_BRACKET  { $$ = new vdd::FunctionDeclarator(std::unique_ptr<vdd::Declarator>($1), ph::unwrap($3)); }
 
 argument-list:
-    %empty
-|   not-empty-argument-list
+    %empty                   { $$ = new std::vector<vdd::Declaration>(); }
+|   not-empty-argument-list  { $$ = $1; }
 
 not-empty-argument-list:
-    type declarator
-|   not-empty-argument-list COMMA type declarator
+    type declarator                                { $$ = new std::vector<vdd::Declaration>(); $$->emplace_back(std::vector<std::string>(), ph::unwrap($1), std::unique_ptr<vdd::Declarator>($2)); }
+|   not-empty-argument-list COMMA type declarator  { $$ = $1; $$->emplace_back(std::vector<std::string>(), ph::unwrap($3), std::unique_ptr<vdd::Declarator>($4)); }
 
 
 optional-template:

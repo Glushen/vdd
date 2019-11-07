@@ -21,6 +21,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_library(
     cpp_vdd_lib STATIC
+    declaration.h declaration.cpp
     parser_helper.h
     type.h type.cpp
     vdd.h vdd.cpp
