@@ -1,7 +1,8 @@
 #pragma once
 
 #include <string>
+#include <variant>
 
 namespace vdd {
-    std::string parseStatement(const std::string&);
+    std::variant<std::string, std::string> parseStatement(const std::string&);
 }

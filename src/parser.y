@@ -6,6 +6,7 @@
 
     extern int yylex(void);
     extern void yyerror(const char *s, ...);
+    extern void yy_accept_ast(vdd::Declaration);
 }
 
 %union {
@@ -30,7 +31,6 @@
 %type <type> type class-type local-class-type
 %type <numericTypeMask> type-numeric signity
 %type <templateTypenames> optional-template typename-list
-%type <declaration> declaration
 %type <declarator> declarator noptr-declarator
 %type <argumentList> argument-list not-empty-argument-list
 
@@ -47,7 +47,7 @@
 
 
 declaration:
-    optional-template type declarator  { $$ = new vdd::Declaration(ph::unwrap($1), ph::unwrap($2), std::unique_ptr<vdd::Declarator>($3)); }
+    optional-template type declarator  { yy_accept_ast(vdd::Declaration(ph::unwrap($1), ph::unwrap($2), std::unique_ptr<vdd::Declarator>($3))); YYACCEPT; }
 
 
 declarator:
