@@ -10,17 +10,20 @@ vdd::Declaration::Declaration(std::unordered_set<std::string> templateTypenames,
 vdd::NameDeclarator::NameDeclarator(std::string name):
     name(std::move(name)) { }
 
-vdd::PointerDeclarator::PointerDeclarator(std::unique_ptr<Declarator> declarator):
+vdd::WrappingDeclarator::WrappingDeclarator(std::unique_ptr<Declarator> declarator):
     declarator(std::move(declarator)) { }
+
+vdd::PointerDeclarator::PointerDeclarator(std::unique_ptr<Declarator> declarator):
+    WrappingDeclarator(std::move(declarator)) { }
 
 vdd::MemberPointerDeclarator::MemberPointerDeclarator(vdd::Type type, std::unique_ptr<Declarator> declarator):
-    type(std::move(type)),
-    declarator(std::move(declarator)) { }
+    WrappingDeclarator(std::move(declarator)),
+    type(std::move(type)) { }
 
 vdd::ArrayDeclarator::ArrayDeclarator(std::unique_ptr<Declarator> declarator, std::string count):
-    declarator(std::move(declarator)),
+    WrappingDeclarator(std::move(declarator)),
     count(std::move(count)) { }
 
 vdd::FunctionDeclarator::FunctionDeclarator(std::unique_ptr<Declarator> declarator, std::vector<Declaration> arguments):
-    declarator(std::move(declarator)),
+    WrappingDeclarator(std::move(declarator)),
     arguments(std::move(arguments)) { }

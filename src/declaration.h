@@ -13,9 +13,9 @@ namespace vdd {
 
     class Declaration {
     public:
+        std::unordered_set<std::string> templateTypenames;
         Type type;
         std::unique_ptr<Declarator> declarator;
-        std::unordered_set<std::string> templateTypenames;
         Declaration(std::unordered_set<std::string> templateTypenames, Type type, std::unique_ptr<Declarator> declarator);
     };
 
@@ -25,29 +25,31 @@ namespace vdd {
         explicit NameDeclarator(std::string);
     };
 
-    class PointerDeclarator: public Declarator {
+    class WrappingDeclarator: public Declarator {
     public:
         std::unique_ptr<Declarator> declarator;
+        explicit WrappingDeclarator(std::unique_ptr<Declarator> declarator);
+    };
+
+    class PointerDeclarator: public WrappingDeclarator {
+    public:
         explicit PointerDeclarator(std::unique_ptr<Declarator> declarator);
     };
 
-    class MemberPointerDeclarator: public Declarator {
+    class MemberPointerDeclarator: public WrappingDeclarator {
     public:
         vdd::Type type;
-        std::unique_ptr<Declarator> declarator;
         MemberPointerDeclarator(vdd::Type type, std::unique_ptr<Declarator> declarator);
     };
 
-    class ArrayDeclarator: public Declarator {
+    class ArrayDeclarator: public WrappingDeclarator {
     public:
-        std::unique_ptr<Declarator> declarator;
         std::string count;
         explicit ArrayDeclarator(std::unique_ptr<Declarator> declarator, std::string count = "");
     };
 
-    class FunctionDeclarator: public Declarator {
+    class FunctionDeclarator: public WrappingDeclarator {
     public:
-        std::unique_ptr<Declarator> declarator;
         std::vector<Declaration> arguments;
         FunctionDeclarator(std::unique_ptr<Declarator> declarator, std::vector<Declaration> arguments);
     };
