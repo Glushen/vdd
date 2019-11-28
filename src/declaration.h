@@ -8,6 +8,8 @@
 namespace vdd {
     class Declarator {
     public:
+        virtual void
+        print(std::ostream& output, const std::unordered_set<std::string>& templateTypenames, int indentSpaceCount) = 0;
         virtual ~Declarator() = default;
     };
 
@@ -23,6 +25,7 @@ namespace vdd {
     public:
         std::string name;
         explicit NameDeclarator(std::string);
+        void print(std::ostream& output, const std::unordered_set<std::string>& templateTypenames, int indentSpaceCount) override;
     };
 
     class WrappingDeclarator: public Declarator {
@@ -34,23 +37,27 @@ namespace vdd {
     class PointerDeclarator: public WrappingDeclarator {
     public:
         explicit PointerDeclarator(std::unique_ptr<Declarator> declarator);
+        void print(std::ostream& output, const std::unordered_set<std::string>& templateTypenames, int indentSpaceCount) override;
     };
 
     class MemberPointerDeclarator: public WrappingDeclarator {
     public:
         vdd::Type type;
         MemberPointerDeclarator(vdd::Type type, std::unique_ptr<Declarator> declarator);
+        void print(std::ostream& output, const std::unordered_set<std::string>& templateTypenames, int indentSpaceCount) override;
     };
 
     class ArrayDeclarator: public WrappingDeclarator {
     public:
         std::string count;
         explicit ArrayDeclarator(std::unique_ptr<Declarator> declarator, std::string count = "");
+        void print(std::ostream& output, const std::unordered_set<std::string>& templateTypenames, int indentSpaceCount) override;
     };
 
     class FunctionDeclarator: public WrappingDeclarator {
     public:
         std::vector<Declaration> arguments;
         FunctionDeclarator(std::unique_ptr<Declarator> declarator, std::vector<Declaration> arguments);
+        void print(std::ostream& output, const std::unordered_set<std::string>& templateTypenames, int indentSpaceCount) override;
     };
 }

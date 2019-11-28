@@ -1,13 +1,38 @@
 #include <cassert>
+#include <iostream>
 #include "inversion.h"
 
 vdd::InversionTypeDeclarator::InversionTypeDeclarator(vdd::Type type):
     type(std::move(type)) { }
 
+void vdd::InversionTypeDeclarator::print(std::ostream& output, const std::unordered_set<std::string>& templateTypenames, int indentSpaceCount) {
+    type.print(output, templateTypenames);
+}
+
 vdd::InvertedDeclaration::InvertedDeclaration(std::unordered_set<std::string> templateTypenames, std::unique_ptr<Declarator> declarator, std::string name):
     templateTypenames(std::move(templateTypenames)),
     declarator(std::move(declarator)),
     name(std::move(name)) { }
+
+void vdd::InvertedDeclaration::print(std::ostream& output, int indentSpaceCount) {
+    for (int i = 0; i < indentSpaceCount; i++) {
+        output << ' ';
+    }
+
+    if (!name.empty()) {
+        output << '\'' << name << '\'' << " is a ";
+    } else {
+        output << "unnamed ";
+    }
+
+    if (dynamic_cast<InversionFunctionDeclarator*>(declarator.get())) {
+        output << "function ";
+    } else if (dynamic_cast<InversionTypeDeclarator*>(declarator.get())) {
+        output << "variable of ";
+    }
+
+    declarator->print(output, templateTypenames, indentSpaceCount);
+}
 
 vdd::InvertedDeclaration vdd::invertDeclaration(vdd::Declaration declaration) {
     Declarator* oldDeclarator = declaration.declarator.release();
@@ -43,3 +68,20 @@ vdd::InvertedDeclaration vdd::invertDeclaration(vdd::Declaration declaration) {
 vdd::InversionFunctionDeclarator::InversionFunctionDeclarator(std::unique_ptr<Declarator> declarator, std::vector<InvertedDeclaration> arguments):
     WrappingDeclarator(std::move(declarator)),
     arguments(std::move(arguments)) { }
+
+void vdd::InversionFunctionDeclarator::print(std::ostream& output, const std::unordered_set<std::string>& templateTypenames, int indentSpaceCount) {
+    if (arguments.empty()) {
+        output << "without arguments";
+    } else if (arguments.size() == 1) {
+        output << "with the following argument:";
+    } else {
+        output << "with the following arguments:";
+    }
+
+    for (auto& argument : arguments) {
+        output << '\n';
+
+        argument.templateTypenames = templateTypenames;
+        argument.print(output, indentSpaceCount + 4);
+    }
+}

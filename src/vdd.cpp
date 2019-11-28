@@ -1,6 +1,8 @@
 #include "vdd.h"
 #include "parser.h"
+#include "inversion.h"
 #include <cstdarg>
+#include <sstream>
 
 extern void yy_set_input_string(const char*);
 extern void yy_clear_buffer();
@@ -9,6 +11,10 @@ static bool accepted = false;
 static std::string result;
 
 std::variant<std::string, std::string> vdd::parseStatement(const std::string& input) {
+#if YYDEBUG
+    yydebug = 1;
+#endif
+
     yy_set_input_string(input.c_str());
     yyparse();
     yy_clear_buffer();
@@ -22,7 +28,10 @@ std::variant<std::string, std::string> vdd::parseStatement(const std::string& in
 
 void yy_accept_ast(vdd::Declaration declaration) {
     accepted = true;
-    result = "temp";
+    auto invertedDeclaration = invertDeclaration(std::move(declaration));
+    auto stream = std::stringstream();
+    invertedDeclaration.print(stream, 0);
+    result = stream.str();
 }
 
 void yyerror(const char* format, ...) {

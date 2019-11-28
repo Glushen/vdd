@@ -16,7 +16,7 @@ void vdd::Type::print(std::ostream& output, const std::unordered_set<std::string
         if (templateTypenames.count(anotherTypeName)) {
             output << "template ";
         }
-        output << "type " << anotherTypeName;
+        output << "type '" << anotherTypeName << '\'';
         return;
     }
 
