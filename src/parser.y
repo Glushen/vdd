@@ -20,13 +20,12 @@
     std::vector<vdd::Declaration>* argumentList;
 }
 
-%token TEMP
-
 %token CHAR LONG SHORT INT FLOAT DOUBLE SIGNED UNSIGNED
 %token <name> NAME
 %token TEMPLATE OPENING_ANGLE_BRACKET CLOSING_ANGLE_BRACKET TYPENAME COMMA DOUBLE_COLON
 %token ASTERISK OPENING_SQUARE_BRACKET CLOSING_SQUARE_BRACKET OPENING_ROUND_BRACKET CLOSING_ROUND_BRACKET
 %token <integer> INTEGER
+%token END_OF_FILE
 
 %type <type> type class-type local-class-type
 %type <numericTypeMask> type-numeric signity
@@ -47,7 +46,7 @@
 
 
 declaration:
-    optional-template type declarator  { yy_accept_ast(vdd::Declaration(ph::unwrap($1), ph::unwrap($2), std::unique_ptr<vdd::Declarator>($3))); YYACCEPT; }
+    optional-template type declarator END_OF_FILE  { yy_accept_ast(vdd::Declaration(ph::unwrap($1), ph::unwrap($2), std::unique_ptr<vdd::Declarator>($3))); YYACCEPT; }
 
 
 declarator:

@@ -31,9 +31,9 @@ typename  { return TYPENAME; }
 
 [a-zA-Z_][a-zA-Z_0-9]*  { yylval.name = new std::string(yytext); return NAME; }
 
-.        { return TEMP; }
-\n       { return TEMP; }
-<<EOF>>  { return TEMP; }
+[\r\n ]  /* ignore spaces */
+<<EOF>>  { return END_OF_FILE; }
+.        { return yytext[0]; }
 
 %%
 
