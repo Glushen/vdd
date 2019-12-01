@@ -1,5 +1,3 @@
-%glr-parser
-
 %code requires {
     #include "parser_helper.h"
     #include "declaration.h"
@@ -54,8 +52,7 @@ declarator:
 |   ASTERISK declarator                                { $$ = new vdd::PointerDeclarator(std::unique_ptr<vdd::Declarator>($2)); }
 
 noptr-declarator:
-    %prec HIGHER_THAN_OPENING_BRACKET %empty                                    { $$ = new vdd::NameDeclarator(""); }
-|   NAME                                                                        { $$ = new vdd::NameDeclarator(ph::unwrap($1)); }
+    NAME                                                                        { $$ = new vdd::NameDeclarator(ph::unwrap($1)); }
 |   class-type DOUBLE_COLON ASTERISK declarator                                 { $$ = new vdd::MemberPointerDeclarator(ph::unwrap($1), std::unique_ptr<vdd::Declarator>($4)); }
 |   OPENING_ROUND_BRACKET declarator CLOSING_ROUND_BRACKET                      { $$ = $2; }
 |   noptr-declarator OPENING_SQUARE_BRACKET CLOSING_SQUARE_BRACKET              { $$ = new vdd::ArrayDeclarator(std::unique_ptr<vdd::Declarator>($1)); }
