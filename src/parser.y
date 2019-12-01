@@ -1,3 +1,6 @@
+%glr-parser
+%expect 7
+
 %code requires {
     #include "parser_helper.h"
     #include "declaration.h"
@@ -60,11 +63,12 @@ noptr-declarator:
 |   noptr-declarator OPENING_ROUND_BRACKET argument-list CLOSING_ROUND_BRACKET  { $$ = new vdd::FunctionDeclarator(std::unique_ptr<vdd::Declarator>($1), ph::unwrap($3)); }
 
 argument-declarator:
-    noptr-argument-declarator %prec LOWER_THAN_OPENING_BRACKET  { $$ = $1; }
-|   ASTERISK argument-declarator                                { $$ = new vdd::PointerDeclarator(std::unique_ptr<vdd::Declarator>($2)); }
+    noptr-argument-declarator     { $$ = $1; }
+|   ASTERISK argument-declarator  { $$ = new vdd::PointerDeclarator(std::unique_ptr<vdd::Declarator>($2)); }
 
 noptr-argument-declarator:
-    NAME                                                                                 { $$ = new vdd::NameDeclarator(ph::unwrap($1)); }
+    %empty                                                                               { $$ = new vdd::NameDeclarator(""); }
+|   NAME                                                                                 { $$ = new vdd::NameDeclarator(ph::unwrap($1)); }
 |   class-type DOUBLE_COLON ASTERISK argument-declarator                                 { $$ = new vdd::MemberPointerDeclarator(ph::unwrap($1), std::unique_ptr<vdd::Declarator>($4)); }
 |   OPENING_ROUND_BRACKET argument-declarator CLOSING_ROUND_BRACKET                      { $$ = $2; }
 |   noptr-argument-declarator OPENING_SQUARE_BRACKET CLOSING_SQUARE_BRACKET              { $$ = new vdd::ArrayDeclarator(std::unique_ptr<vdd::Declarator>($1)); }
