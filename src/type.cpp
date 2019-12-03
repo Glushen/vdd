@@ -11,13 +11,15 @@ vdd::Type::Type(std::string anotherTypeName):
     numericTypeMask(-1),
     anotherTypeName(std::move(anotherTypeName)) { }
 
-void vdd::Type::print(std::ostream& output, const std::unordered_set<std::string>& templateTypenames) {
+void vdd::Type::print(std::ostream& output, const std::unordered_set<std::string>& templateTypenames, bool printPrefix) {
     if (isVoid()) {
         output << "nothing";
         return;
     }
 
-    output << "a value of ";
+    if (printPrefix) {
+        output << "a value of ";
+    }
 
     if (!anotherTypeName.empty()) {
         if (templateTypenames.count(anotherTypeName)) {

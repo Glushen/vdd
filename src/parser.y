@@ -28,7 +28,7 @@
 %token <integer> INTEGER
 %token END_OF_FILE
 
-%type <type> type class-type local-class-type
+%type <type> type class-type ptr-class-type
 %type <numericTypeMask> type-numeric signity
 %type <templateTypenames> optional-template typename-list
 %type <declarator> declarator noptr-declarator ptr-declarator function-declarator
@@ -58,7 +58,7 @@ declarator:
 
 noptr-declarator:
     NAME                                                                    { $$ = new vdd::NameDeclarator(ph::unwrap($1)); }
-|   class-type DOUBLE_COLON ASTERISK declarator                             { $$ = new vdd::MemberPointerDeclarator(ph::unwrap($1), std::unique_ptr<vdd::Declarator>($4)); }
+|   ptr-class-type ASTERISK declarator                                      { $$ = new vdd::MemberPointerDeclarator(ph::unwrap($1), std::unique_ptr<vdd::Declarator>($3)); }
 |   OPENING_ROUND_BRACKET noptr-declarator CLOSING_ROUND_BRACKET            { $$ = $2; }
 |   OPENING_ROUND_BRACKET ptr-declarator CLOSING_ROUND_BRACKET              { $$ = $2; }
 |   noptr-declarator OPENING_SQUARE_BRACKET CLOSING_SQUARE_BRACKET          { $$ = new vdd::ArrayDeclarator(std::unique_ptr<vdd::Declarator>($1)); }
@@ -77,13 +77,13 @@ argument-declarator:
 |   function-argument-declarator  { $$ = $1; }
 
 noptr-argument-declarator:
-    %empty                                                                               { $$ = new vdd::NameDeclarator(""); }
-|   NAME                                                                                 { $$ = new vdd::NameDeclarator(ph::unwrap($1)); }
-|   class-type DOUBLE_COLON ASTERISK argument-declarator                                 { $$ = new vdd::MemberPointerDeclarator(ph::unwrap($1), std::unique_ptr<vdd::Declarator>($4)); }
-|   OPENING_ROUND_BRACKET noptr-argument-declarator CLOSING_ROUND_BRACKET                { $$ = $2; }
-|   OPENING_ROUND_BRACKET ptr-argument-declarator CLOSING_ROUND_BRACKET                  { $$ = $2; }
-|   noptr-argument-declarator OPENING_SQUARE_BRACKET CLOSING_SQUARE_BRACKET              { $$ = new vdd::ArrayDeclarator(std::unique_ptr<vdd::Declarator>($1)); }
-|   noptr-argument-declarator OPENING_SQUARE_BRACKET INTEGER CLOSING_SQUARE_BRACKET      { $$ = new vdd::ArrayDeclarator(std::unique_ptr<vdd::Declarator>($1), ph::unwrap($3)); }
+    %empty                                                                           { $$ = new vdd::NameDeclarator(""); }
+|   NAME                                                                             { $$ = new vdd::NameDeclarator(ph::unwrap($1)); }
+|   ptr-class-type ASTERISK argument-declarator                                      { $$ = new vdd::MemberPointerDeclarator(ph::unwrap($1), std::unique_ptr<vdd::Declarator>($3)); }
+|   OPENING_ROUND_BRACKET noptr-argument-declarator CLOSING_ROUND_BRACKET            { $$ = $2; }
+|   OPENING_ROUND_BRACKET ptr-argument-declarator CLOSING_ROUND_BRACKET              { $$ = $2; }
+|   noptr-argument-declarator OPENING_SQUARE_BRACKET CLOSING_SQUARE_BRACKET          { $$ = new vdd::ArrayDeclarator(std::unique_ptr<vdd::Declarator>($1)); }
+|   noptr-argument-declarator OPENING_SQUARE_BRACKET INTEGER CLOSING_SQUARE_BRACKET  { $$ = new vdd::ArrayDeclarator(std::unique_ptr<vdd::Declarator>($1), ph::unwrap($3)); }
 
 ptr-argument-declarator:
     ASTERISK argument-declarator  { $$ = new vdd::PointerDeclarator(std::unique_ptr<vdd::Declarator>($2)); }
@@ -110,17 +110,19 @@ typename-list:
 |   typename-list COMMA TYPENAME NAME  { $$ = $1; $$->insert(ph::unwrap($4)); }
 
 type:
-    type-numeric  { $$ = new vdd::Type($1); }
-|   VOID          { $$ = new vdd::Type(vdd::VOID); }
-|   class-type    { $$ = $1; }
+    type-numeric                              { $$ = new vdd::Type($1); }
+|   VOID                                      { $$ = new vdd::Type(vdd::VOID); }
+|   class-type %prec LOWER_THAN_DOUBLE_COLON  { $$ = $1; }
 
 class-type:
-    local-class-type %prec LOWER_THAN_DOUBLE_COLON  { $$ = $1; }
-|   DOUBLE_COLON local-class-type                   { $$ = $2; }
+    NAME                          { $$ = new vdd::Type(ph::unwrap($1)); }
+|   DOUBLE_COLON NAME             { $$ = new vdd::Type(ph::unwrap($2)); }
+|   class-type DOUBLE_COLON NAME  { $$ = $1; $$->anotherTypeName += "::" + ph::unwrap($3); }
 
-local-class-type:
-    NAME                                { $$ = new vdd::Type(ph::unwrap($1)); }
-|   local-class-type DOUBLE_COLON NAME  { $$ = $1; $$->anotherTypeName += "::" + ph::unwrap($3); }
+ptr-class-type:
+    NAME DOUBLE_COLON                 { $$ = new vdd::Type(ph::unwrap($1)); }
+|   DOUBLE_COLON NAME DOUBLE_COLON    { $$ = new vdd::Type(ph::unwrap($2)); }
+|   ptr-class-type NAME DOUBLE_COLON  { $$ = $1; $$->anotherTypeName += "::" + ph::unwrap($2); }
 
 type-numeric:
     CHAR          { $$ = vdd::CHAR; }

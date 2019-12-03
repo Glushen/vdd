@@ -34,9 +34,9 @@ vdd::MemberPointerDeclarator::MemberPointerDeclarator(vdd::Type type, std::uniqu
     type(std::move(type)) { }
 
 void vdd::MemberPointerDeclarator::print(std::ostream& output, const std::unordered_set<std::string>& templateTypenames, int indentSpaceCount) {
-    output << "pointer to member of ";
-    type.print(output, templateTypenames);
-    output << " ";
+    output << "a pointer to member of ";
+    type.print(output, templateTypenames, false);
+    output << " to ";
     declarator->print(output, templateTypenames, indentSpaceCount);
 }
 
