@@ -1,8 +1,11 @@
 #pragma once
 
 #include <string>
-#include <variant>
 
 namespace vdd {
-    std::variant<std::string, std::string> parseStatement(const std::string&);
+    struct Result {
+        bool accepted = false;
+        std::string output;
+    };
+    Result parseStatement(const std::string&);
 }

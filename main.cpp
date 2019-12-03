@@ -1,6 +1,5 @@
 #include <string>
 #include <iostream>
-#include <variant>
 #include "vdd.h"
 
 int main() {
@@ -8,11 +7,11 @@ int main() {
     std::getline(std::cin, input);
 
     auto result = vdd::parseStatement(input);
-    if (result.index() == 0) {
-        std::cout << std::get<0>(result);
+    if (result.accepted) {
+        std::cout << result.output;
         return 0;
     } else {
-        std::cerr << "Error: " << std::get<1>(result);
+        std::cerr << "Error: " << result.output;
         return 1;
     }
 }

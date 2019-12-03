@@ -12,6 +12,11 @@ vdd::Type::Type(std::string anotherTypeName):
     anotherTypeName(std::move(anotherTypeName)) { }
 
 void vdd::Type::print(std::ostream& output, const std::unordered_set<std::string>& templateTypenames) {
+    if (isVoid()) {
+        output << "nothing";
+        return;
+    }
+
     output << "a value of ";
 
     if (!anotherTypeName.empty()) {
@@ -63,4 +68,8 @@ void vdd::Type::print(std::ostream& output, const std::unordered_set<std::string
 
     assert(numericTypeMask & INT);
     output << "int";
+}
+
+bool vdd::Type::isVoid() {
+    return numericTypeMask != -1 && numericTypeMask & VOID;
 }

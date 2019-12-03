@@ -4,4 +4,4 @@
 
 void ASSERT_SUCCESS(const std::string& input, const std::string& output);
 
-void ASSERT_FAIL(const std::string& input);
+void ASSERT_FAIL(const std::string& input, const std::string& output = "syntax error");

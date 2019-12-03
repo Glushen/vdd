@@ -13,6 +13,7 @@ namespace vdd {
     const unsigned int LONG_LONG = 32;
     const unsigned int FLOAT = 64;
     const unsigned int DOUBLE = 128;
+    const unsigned int VOID = 256;
 
     class Type {
     public:
@@ -23,5 +24,7 @@ namespace vdd {
         explicit Type(std::string anotherTypeName);
 
         void print(std::ostream& output, const std::unordered_set<std::string>& templateTypenames);
+
+        bool isVoid();
     };
 }

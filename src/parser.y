@@ -21,7 +21,7 @@
     std::vector<vdd::Declaration>* argumentList;
 }
 
-%token CHAR LONG SHORT INT FLOAT DOUBLE SIGNED UNSIGNED
+%token VOID CHAR LONG SHORT INT FLOAT DOUBLE SIGNED UNSIGNED
 %token <name> NAME
 %token TEMPLATE OPENING_ANGLE_BRACKET CLOSING_ANGLE_BRACKET TYPENAME COMMA DOUBLE_COLON
 %token ASTERISK OPENING_SQUARE_BRACKET CLOSING_SQUARE_BRACKET OPENING_ROUND_BRACKET CLOSING_ROUND_BRACKET
@@ -110,8 +110,9 @@ typename-list:
 |   typename-list COMMA TYPENAME NAME  { $$ = $1; $$->insert(ph::unwrap($4)); }
 
 type:
-    type-numeric             { $$ = new vdd::Type($1); }
-|   class-type               { $$ = $1; }
+    type-numeric  { $$ = new vdd::Type($1); }
+|   VOID          { $$ = new vdd::Type(vdd::VOID); }
+|   class-type    { $$ = $1; }
 
 class-type:
     local-class-type %prec LOWER_THAN_DOUBLE_COLON  { $$ = $1; }

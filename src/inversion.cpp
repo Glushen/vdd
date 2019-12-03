@@ -31,6 +31,10 @@ void vdd::InvertedDeclaration::print(std::ostream& output, int indentSpaceCount)
 }
 
 vdd::InvertedDeclaration vdd::invertDeclaration(vdd::Declaration declaration) {
+    if (dynamic_cast<NameDeclarator*>(declaration.declarator.get()) && declaration.type.isVoid()) {
+        throw std::invalid_argument("syntax error");
+    }
+
     Declarator* oldDeclarator = declaration.declarator.release();
     Declarator* newDeclarator = new InversionTypeDeclarator(std::move(declaration.type));
 

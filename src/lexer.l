@@ -6,6 +6,7 @@
 
 %%
 
+void      { return VOID; }
 char      { return CHAR; }
 long      { return LONG; }
 short     { return SHORT; }

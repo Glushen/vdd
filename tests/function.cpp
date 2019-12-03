@@ -2,6 +2,15 @@
 #include "vdd.h"
 #include "util.h"
 
+TEST(function, t0) {
+    ASSERT_SUCCESS(
+        "void f()",
+        "'f' is a function\n"
+        "    without arguments\n"
+        "    returning nothing"
+    );
+}
+
 TEST(function, t1) {
     ASSERT_SUCCESS(
         "int f()",

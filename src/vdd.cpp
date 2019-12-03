@@ -7,10 +7,9 @@
 extern void yy_set_input_string(const char*);
 extern void yy_clear_buffer();
 
-static bool accepted = false;
-static std::string result;
+static vdd::Result result;
 
-std::variant<std::string, std::string> vdd::parseStatement(const std::string& input) {
+vdd::Result vdd::parseStatement(const std::string& input) {
 #if YYDEBUG
     yydebug = 1;
 #endif
@@ -19,23 +18,24 @@ std::variant<std::string, std::string> vdd::parseStatement(const std::string& in
     yyparse();
     yy_clear_buffer();
 
-    if (accepted) {
-        return std::variant<std::string, std::string>(std::in_place_index<0>, result);
-    } else {
-        return std::variant<std::string, std::string>(std::in_place_index<1>, result);
-    }
+    return result;
 }
 
 void yy_accept_ast(vdd::Declaration declaration) {
-    accepted = true;
-    auto invertedDeclaration = invertDeclaration(std::move(declaration));
-    auto stream = std::stringstream();
-    invertedDeclaration.print(stream, 0);
-    result = stream.str();
+    try {
+        result.accepted = true;
+        auto invertedDeclaration = invertDeclaration(std::move(declaration));
+        auto stream = std::stringstream();
+        invertedDeclaration.print(stream, 0);
+        result.output = stream.str();
+    } catch (const std::invalid_argument& exception) {
+        result.accepted = false;
+        result.output = exception.what();
+    }
 }
 
 void yyerror(const char* format, ...) {
-    accepted = false;
+    result.accepted = false;
 
     va_list arguments;
 
@@ -47,6 +47,6 @@ void yyerror(const char* format, ...) {
     vsprintf(result_chars, format, arguments);
     va_end(arguments);
 
-    result = result_chars;
+    result.output = result_chars;
     delete[] result_chars;
 }
