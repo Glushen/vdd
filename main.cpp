@@ -10,7 +10,9 @@ int main() {
     auto result = vdd::parseStatement(input);
     if (result.index() == 0) {
         std::cout << std::get<0>(result);
+        return 0;
     } else {
-        std::cout << "Error: " << std::get<1>(result);
+        std::cerr << "Error: " << std::get<1>(result);
+        return 1;
     }
 }
