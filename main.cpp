@@ -8,10 +8,10 @@ int main() {
 
     auto result = vdd::parseStatement(input);
     if (result.accepted) {
-        std::cout << result.output;
+        std::cout << result.output << std::endl;
         return 0;
     } else {
-        std::cerr << "Error: " << result.output;
+        std::cerr << "Error: " << result.output << std::endl;
         return 1;
     }
 }
