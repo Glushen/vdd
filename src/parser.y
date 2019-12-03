@@ -23,7 +23,7 @@
 
 %token VOID CHAR LONG SHORT INT FLOAT DOUBLE SIGNED UNSIGNED
 %token <name> NAME
-%token TEMPLATE OPENING_ANGLE_BRACKET CLOSING_ANGLE_BRACKET TYPENAME COMMA DOUBLE_COLON
+%token TEMPLATE OPENING_ANGLE_BRACKET CLOSING_ANGLE_BRACKET TYPENAME COMMA DOUBLE_COLON SEMICOLON
 %token ASTERISK OPENING_SQUARE_BRACKET CLOSING_SQUARE_BRACKET OPENING_ROUND_BRACKET CLOSING_ROUND_BRACKET
 %token <integer> INTEGER
 %token END_OF_FILE
@@ -48,7 +48,7 @@
 
 
 declaration:
-    optional-template type declarator END_OF_FILE  { yy_accept_ast(vdd::Declaration(ph::unwrap($1), ph::unwrap($2), std::unique_ptr<vdd::Declarator>($3))); YYACCEPT; }
+    optional-template type declarator optional-semicolon END_OF_FILE  { yy_accept_ast(vdd::Declaration(ph::unwrap($1), ph::unwrap($2), std::unique_ptr<vdd::Declarator>($3))); YYACCEPT; }
 
 
 declarator:
@@ -192,3 +192,7 @@ type-numeric:
 signity:
     SIGNED    { $$ = vdd::SIGNED; }
 |   UNSIGNED  { $$ = vdd::UNSIGNED; }
+
+optional-semicolon:
+    %empty
+|   SEMICOLON

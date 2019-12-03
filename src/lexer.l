@@ -22,6 +22,7 @@ template  { return TEMPLATE; }
 typename  { return TYPENAME; }
 ,         { return COMMA; }
 ::        { return DOUBLE_COLON; }
+;         { return SEMICOLON; }
 
 \*        { return ASTERISK; }
 \[        { return OPENING_SQUARE_BRACKET; }

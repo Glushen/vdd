@@ -2,6 +2,10 @@
 #include "vdd.h"
 #include "util.h"
 
+TEST(mixed, t0) {
+    ASSERT_SUCCESS("int x;", "'x' is a value of type int");
+}
+
 TEST(mixed, t1) {
     ASSERT_SUCCESS("int x", "'x' is a value of type int");
 }
