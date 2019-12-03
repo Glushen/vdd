@@ -25,12 +25,6 @@ void vdd::InvertedDeclaration::print(std::ostream& output, int indentSpaceCount)
 
     if (!name.empty()) {
         output << '\'' << name << '\'' << " is ";
-    } else {
-        output << "unnamed ";
-    }
-
-    if (dynamic_cast<InversionTypeDeclarator*>(declarator.get())) {
-        output << "a variable of ";
     }
 
     declarator->print(output, templateTypenames, indentSpaceCount);

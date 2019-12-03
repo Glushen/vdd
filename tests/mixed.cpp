@@ -3,13 +3,13 @@
 #include "util.h"
 
 TEST(mixed, t1) {
-    ASSERT_SUCCESS("int x", "'x' is a variable of type int");
+    ASSERT_SUCCESS("int x", "'x' is a value of type int");
 }
 
 TEST(mixed, t2) {
-    ASSERT_SUCCESS("int (x)", "'x' is a variable of type int");
+    ASSERT_SUCCESS("int (x)", "'x' is a value of type int");
 }
 
 TEST(mixed, t3) {
-    ASSERT_SUCCESS("int ((((x))))", "'x' is a variable of type int");
+    ASSERT_SUCCESS("int ((((x))))", "'x' is a value of type int");
 }

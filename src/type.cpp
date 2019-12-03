@@ -12,6 +12,8 @@ vdd::Type::Type(std::string anotherTypeName):
     anotherTypeName(std::move(anotherTypeName)) { }
 
 void vdd::Type::print(std::ostream& output, const std::unordered_set<std::string>& templateTypenames) {
+    output << "a value of ";
+
     if (!anotherTypeName.empty()) {
         if (templateTypenames.count(anotherTypeName)) {
             output << "template ";

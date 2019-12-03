@@ -3,31 +3,31 @@
 #include "util.h"
 
 TEST(types, i) {
-    ASSERT_SUCCESS("int x", "'x' is a variable of type int");
+    ASSERT_SUCCESS("int x", "'x' is a value of type int");
 }
 
 TEST(types, ui1) {
-    ASSERT_SUCCESS("unsigned int x", "'x' is a variable of type unsigned int");
+    ASSERT_SUCCESS("unsigned int x", "'x' is a value of type unsigned int");
 }
 
 TEST(types, ui2) {
-    ASSERT_SUCCESS("int unsigned x", "'x' is a variable of type unsigned int");
+    ASSERT_SUCCESS("int unsigned x", "'x' is a value of type unsigned int");
 }
 
 TEST(types, uc) {
-    ASSERT_SUCCESS("char unsigned x", "'x' is a variable of type unsigned char");
+    ASSERT_SUCCESS("char unsigned x", "'x' is a value of type unsigned char");
 }
 
 TEST(types, ss) {
-    ASSERT_SUCCESS("signed short x", "'x' is a variable of type short");
+    ASSERT_SUCCESS("signed short x", "'x' is a value of type short");
 }
 
 TEST(types, l) {
-    ASSERT_SUCCESS("long x", "'x' is a variable of type long");
+    ASSERT_SUCCESS("long x", "'x' is a value of type long");
 }
 
 TEST(types, f) {
-    ASSERT_SUCCESS("float x", "'x' is a variable of type float");
+    ASSERT_SUCCESS("float x", "'x' is a value of type float");
 }
 
 TEST(types, lf) {
@@ -35,15 +35,15 @@ TEST(types, lf) {
 }
 
 TEST(types, d) {
-    ASSERT_SUCCESS("double x", "'x' is a variable of type double");
+    ASSERT_SUCCESS("double x", "'x' is a value of type double");
 }
 
 TEST(types, ld1) {
-    ASSERT_SUCCESS("long double x", "'x' is a variable of type long double");
+    ASSERT_SUCCESS("long double x", "'x' is a value of type long double");
 }
 
 TEST(types, ld2) {
-    ASSERT_SUCCESS("double long x", "'x' is a variable of type long double");
+    ASSERT_SUCCESS("double long x", "'x' is a value of type long double");
 }
 
 TEST(types, sf) {
@@ -55,7 +55,7 @@ TEST(types, ud) {
 }
 
 TEST(types, ull) {
-    ASSERT_SUCCESS("long int long unsigned x", "'x' is a variable of type unsigned long long");
+    ASSERT_SUCCESS("long int long unsigned x", "'x' is a value of type unsigned long long");
 }
 
 TEST(types, ulll) {

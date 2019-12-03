@@ -45,7 +45,7 @@ vdd::ArrayDeclarator::ArrayDeclarator(std::unique_ptr<Declarator> declarator, st
     count(std::move(count)) { }
 
 void vdd::ArrayDeclarator::print(std::ostream& output, const std::unordered_set<std::string>& templateTypenames, int indentSpaceCount) {
-    output << "array of ";
+    output << "an array of ";
     if (count.empty()) {
         output << "unspecified size";
     } else {
