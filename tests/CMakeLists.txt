@@ -8,6 +8,7 @@ add_executable(
     types.cpp
     pointer.cpp
     template.cpp
+    ambiguous.cpp
     util.h util.cpp
 )
 

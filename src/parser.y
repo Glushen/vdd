@@ -31,7 +31,8 @@
 %type <type> type class-type local-class-type
 %type <numericTypeMask> type-numeric signity
 %type <templateTypenames> optional-template typename-list
-%type <declarator> declarator noptr-declarator argument-declarator noptr-argument-declarator
+%type <declarator> declarator noptr-declarator ptr-declarator function-declarator
+%type <declarator> argument-declarator noptr-argument-declarator ptr-argument-declarator function-argument-declarator
 %type <argumentList> argument-list not-empty-argument-list
 
 
@@ -52,28 +53,44 @@ declaration:
 
 declarator:
     noptr-declarator %prec LOWER_THAN_OPENING_BRACKET  { $$ = $1; }
-|   ASTERISK declarator                                { $$ = new vdd::PointerDeclarator(std::unique_ptr<vdd::Declarator>($2)); }
+|   ptr-declarator                                     { $$ = $1; }
+|   function-declarator                                { $$ = $1; }
 
 noptr-declarator:
-    NAME                                                                        { $$ = new vdd::NameDeclarator(ph::unwrap($1)); }
-|   class-type DOUBLE_COLON ASTERISK declarator                                 { $$ = new vdd::MemberPointerDeclarator(ph::unwrap($1), std::unique_ptr<vdd::Declarator>($4)); }
-|   OPENING_ROUND_BRACKET declarator CLOSING_ROUND_BRACKET                      { $$ = $2; }
-|   noptr-declarator OPENING_SQUARE_BRACKET CLOSING_SQUARE_BRACKET              { $$ = new vdd::ArrayDeclarator(std::unique_ptr<vdd::Declarator>($1)); }
-|   noptr-declarator OPENING_SQUARE_BRACKET INTEGER CLOSING_SQUARE_BRACKET      { $$ = new vdd::ArrayDeclarator(std::unique_ptr<vdd::Declarator>($1), ph::unwrap($3)); }
-|   noptr-declarator OPENING_ROUND_BRACKET argument-list CLOSING_ROUND_BRACKET  { $$ = new vdd::FunctionDeclarator(std::unique_ptr<vdd::Declarator>($1), ph::unwrap($3)); }
+    NAME                                                                    { $$ = new vdd::NameDeclarator(ph::unwrap($1)); }
+|   class-type DOUBLE_COLON ASTERISK declarator                             { $$ = new vdd::MemberPointerDeclarator(ph::unwrap($1), std::unique_ptr<vdd::Declarator>($4)); }
+|   OPENING_ROUND_BRACKET noptr-declarator CLOSING_ROUND_BRACKET            { $$ = $2; }
+|   OPENING_ROUND_BRACKET ptr-declarator CLOSING_ROUND_BRACKET              { $$ = $2; }
+|   noptr-declarator OPENING_SQUARE_BRACKET CLOSING_SQUARE_BRACKET          { $$ = new vdd::ArrayDeclarator(std::unique_ptr<vdd::Declarator>($1)); }
+|   noptr-declarator OPENING_SQUARE_BRACKET INTEGER CLOSING_SQUARE_BRACKET  { $$ = new vdd::ArrayDeclarator(std::unique_ptr<vdd::Declarator>($1), ph::unwrap($3)); }
+
+ptr-declarator:
+    ASTERISK declarator  { $$ = new vdd::PointerDeclarator(std::unique_ptr<vdd::Declarator>($2)); }
+
+function-declarator:
+    noptr-declarator OPENING_ROUND_BRACKET argument-list CLOSING_ROUND_BRACKET  { $$ = new vdd::FunctionDeclarator(std::unique_ptr<vdd::Declarator>($1), ph::unwrap($3)); }
+|   OPENING_ROUND_BRACKET function-declarator CLOSING_ROUND_BRACKET             { $$ = $2; }
 
 argument-declarator:
     noptr-argument-declarator     { $$ = $1; }
-|   ASTERISK argument-declarator  { $$ = new vdd::PointerDeclarator(std::unique_ptr<vdd::Declarator>($2)); }
+|   ptr-argument-declarator       { $$ = $1; }
+|   function-argument-declarator  { $$ = $1; }
 
 noptr-argument-declarator:
     %empty                                                                               { $$ = new vdd::NameDeclarator(""); }
 |   NAME                                                                                 { $$ = new vdd::NameDeclarator(ph::unwrap($1)); }
 |   class-type DOUBLE_COLON ASTERISK argument-declarator                                 { $$ = new vdd::MemberPointerDeclarator(ph::unwrap($1), std::unique_ptr<vdd::Declarator>($4)); }
-|   OPENING_ROUND_BRACKET argument-declarator CLOSING_ROUND_BRACKET                      { $$ = $2; }
+|   OPENING_ROUND_BRACKET noptr-argument-declarator CLOSING_ROUND_BRACKET                { $$ = $2; }
+|   OPENING_ROUND_BRACKET ptr-argument-declarator CLOSING_ROUND_BRACKET                  { $$ = $2; }
 |   noptr-argument-declarator OPENING_SQUARE_BRACKET CLOSING_SQUARE_BRACKET              { $$ = new vdd::ArrayDeclarator(std::unique_ptr<vdd::Declarator>($1)); }
 |   noptr-argument-declarator OPENING_SQUARE_BRACKET INTEGER CLOSING_SQUARE_BRACKET      { $$ = new vdd::ArrayDeclarator(std::unique_ptr<vdd::Declarator>($1), ph::unwrap($3)); }
-|   noptr-argument-declarator OPENING_ROUND_BRACKET argument-list CLOSING_ROUND_BRACKET  { $$ = new vdd::FunctionDeclarator(std::unique_ptr<vdd::Declarator>($1), ph::unwrap($3)); }
+
+ptr-argument-declarator:
+    ASTERISK argument-declarator  { $$ = new vdd::PointerDeclarator(std::unique_ptr<vdd::Declarator>($2)); }
+
+function-argument-declarator:
+    noptr-argument-declarator OPENING_ROUND_BRACKET argument-list CLOSING_ROUND_BRACKET  { $$ = new vdd::FunctionDeclarator(std::unique_ptr<vdd::Declarator>($1), ph::unwrap($3)); }
+|   OPENING_ROUND_BRACKET function-argument-declarator CLOSING_ROUND_BRACKET             { $$ = $2; }
 
 argument-list:
     %empty                   { $$ = new std::vector<vdd::Declaration>(); }

@@ -25,7 +25,7 @@ vdd::PointerDeclarator::PointerDeclarator(std::unique_ptr<Declarator> declarator
     WrappingDeclarator(std::move(declarator)) { }
 
 void vdd::PointerDeclarator::print(std::ostream& output, const std::unordered_set<std::string>& templateTypenames, int indentSpaceCount) {
-    output << "pointer to ";
+    output << "a pointer to ";
     declarator->print(output, templateTypenames, indentSpaceCount);
 }
 

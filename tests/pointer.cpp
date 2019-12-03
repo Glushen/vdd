@@ -7,9 +7,9 @@ TEST(pointer, t1) {
 }
 
 TEST(pointer, t2) {
-    ASSERT_SUCCESS("int**x", "'x' is a pointer to pointer to type int");
+    ASSERT_SUCCESS("int**x", "'x' is a pointer to a pointer to type int");
 }
 
 TEST(pointer, t3) {
-    ASSERT_SUCCESS("int(**(*x))", "'x' is a pointer to pointer to pointer to type int");
+    ASSERT_SUCCESS("int(**(*x))", "'x' is a pointer to a pointer to a pointer to type int");
 }
